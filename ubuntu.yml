@@ -1,0 +1,111 @@
+---
+- hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+  - name: install basic packages
+    apt:
+      name:
+        - htop
+        - tig
+        - tmux
+        - python3-pip
+        - python3-psutil
+        - awscli
+        - pipenv
+
+  - name: set minimize on click
+    become_user: dhiraj
+    dconf:
+      key: "/org/gnome/shell/extensions/dash-to-dock/click-action"
+      value: "'minimize'"
+
+  - name: set cycle-windows on scroll
+    become_user: dhiraj
+    dconf:
+      key: "/org/gnome/shell/extensions/dash-to-dock/scroll-action"
+      value: "'cycle-windows'"
+
+  - name: set show-trash on desktop to false
+    become_user: dhiraj
+    dconf:
+      key: "/org/gnome/shell/extensions/desktop-icons/show-trash"
+      value: "false"
+
+  - name: set show-home on desktop to false
+    become_user: dhiraj
+    dconf:
+      key: "/org/gnome/shell/extensions/desktop-icons/show-home"
+      value: "false"
+
+  - name: add mount block to fstab
+    lineinfile:
+      path: /etc/fstab
+      regexp: "^base /home/dhiraj/base"
+      line: "base /home/dhiraj/base vboxsf rw,noauto 0 1"
+      create: yes
+      state: present
+
+  - name: add env vars to .bashrc
+    blockinfile:
+      path: /home/dhiraj/.bashrc
+      block: |
+
+        # Git bash prompt setting
+        GIT_PROMPT_ONLY_IN_REPO=1
+        GIT_PROMPT_THEME=Evermeet_Ubuntu
+        source ~/.bash-git-prompt/gitprompt.sh
+
+        # Path for tfenv installation
+        export PATH="$HOME/.tfenv/bin:$PATH"
+
+        # AWS CLI settings
+        export AWS_PROFILE=saml
+        export AWS_REGION=eu-central-1
+        # export AWS_DEFAULT_PROFILE=saml
+        # export AWS_DEFAULT_REGION=eu-central-1
+
+        # Spark path setting (JAVA_HOME and SPARK_HOME must be defined in /etc/environment already)
+        export PATH=$PATH:$JAVA_HOME/bin:$SPARK_HOME/sbin
+
+        # Nexus login and Serverless encrypt/decrypt password
+        export NEXUS_USER_NAME=max-nexus-rw
+        export NEXUS_USER_PASSWORD=<nexus_password>
+        export SLS_PASSWD=<sls_encryption_password>
+      create: yes
+      state: present
+      owner: dhiraj
+      group: dhiraj
+
+  - name: add path vars to /etc/environment
+    blockinfile:
+      path: /etc/environment
+      block: |
+        PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+        JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+        SPARK_HOME="/usr/local/spark/spark-3.0.2-bin-hadoop2.7/"
+      create: yes
+      state: present
+      owner: dhiraj
+      group: dhiraj
+
+  - name: add ansible user
+    user:
+      name: velociraptor
+      system: yes
+
+  - name: set up sudo for ansible user
+    copy:
+      src: ubuntu_config/sudoer_velociraptor
+      dest: /etc/sudoers.d/velociraptor
+      owner: root
+      group: root
+      mode: 0440
+
+  - name: add ansible-pull cron job
+    cron:
+      name: ansible auto-provisioning
+      user: velociraptor
+      minute: "*/10"
+      job: ansible-pull -o -U https://github.com/edhipat/ansible_desktop.git ubuntu.yml
