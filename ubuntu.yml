@@ -16,6 +16,7 @@
         - pipenv
         - wget
         - curl
+        - postgresql-client
 
   - name: install jdk packages
     apt:
