@@ -2,6 +2,8 @@
 - hosts: localhost
   connection: local
   become: true
+  vars_files:
+    - variables.yml
 
   tasks:
   - name: install basic packages
@@ -18,12 +20,18 @@
         - curl
         - postgresql-client
 
+  - name: install VBox Guest addition
+    apt:
+      name:
+        - virtualbox-guest-dkms
+
   - name: install jdk packages
     apt:
       name:
         - openjdk-8-jdk
         - default-jdk
         - scala
+        - maven
 
   - name: install git-bash packages
     become_user: dhiraj
@@ -111,6 +119,15 @@
         SPARK_HOME="/usr/local/spark/spark-3.0.2-bin-hadoop2.7/"
       create: yes
       state: present
+      owner: dhiraj
+      group: dhiraj
+
+  - name: download and install saml2aws
+    unarchive:
+      remote_src: yes
+      src: https://github.com/Versent/saml2aws/releases/download/v{{ saml2aws_version }}/saml2aws_{{ saml2aws_version }}_linux_amd64.tar.gz
+      dest: /usr/local/bin
+      mode: u+x
       owner: dhiraj
       group: dhiraj
 
