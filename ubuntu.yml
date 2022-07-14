@@ -20,18 +20,18 @@
         - curl
         - postgresql-client
 
-  - name: install VBox Guest addition
-    apt:
-      name:
-        - virtualbox-guest-dkms
+#  - name: install VBox Guest addition
+#    apt:
+#      name:
+#        - virtualbox-guest-dkms
 
-  - name: install jdk packages
-    apt:
-      name:
-        - openjdk-8-jdk
-        - default-jdk
-        - scala
-        - maven
+#  - name: install jdk packages
+#    apt:
+#      name:
+#        - openjdk-8-jdk
+#        - default-jdk
+#        - scala
+#        - maven
 
   - name: install git-bash packages
     become_user: dhiraj
@@ -115,8 +115,8 @@
       path: /etc/environment
       block: |
         PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
-        JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-        SPARK_HOME="/usr/local/spark/spark-3.0.2-bin-hadoop2.7/"
+        JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+        SPARK_HOME="/usr/local/spark/spark-3.1.2-bin-hadoop2.7/"
       create: yes
       state: present
       owner: dhiraj
@@ -131,22 +131,22 @@
       owner: dhiraj
       group: dhiraj
 
-  - name: add ansible user
-    user:
-      name: velociraptor
-      system: yes
-
-  - name: set up sudo for ansible user
-    copy:
-      src: ubuntu_config/sudoer_velociraptor
-      dest: /etc/sudoers.d/velociraptor
-      owner: root
-      group: root
-      mode: 0440
-
-  - name: add ansible-pull cron job
-    cron:
-      name: ansible auto-provisioning
-      user: velociraptor
-      minute: "*/10"
-      job: ansible-pull -o -U https://github.com/edhipat/ansible_desktop.git ubuntu.yml
+#  - name: add ansible user
+#    user:
+#      name: ans_reporter
+#      system: yes
+#
+#  - name: set up sudo for ansible user
+#    copy:
+#      src: ubuntu_config/sudoer_ans_reporter
+#      dest: /etc/sudoers.d/ans_reporter
+#      owner: root
+#      group: root
+#      mode: 0440
+#
+#  - name: add ansible-pull cron job
+#    cron:
+#      name: ansible auto-provisioning
+#      user: velociraptor
+#      minute: "*/10"
+#      job: ansible-pull -o -U https://github.com/edhipat/ansible_desktop.git ubuntu.yml

@@ -13,7 +13,7 @@ git config --global user.name "Pathania, Dhiraj"
 ```shell
 sudo ansible-pull -U https://github.com/edhipat/ansible_desktop.git ubuntu.yml
 ```
-3. 
+
 
 ### Optional steps:
 If Ubuntu desktop is installed on VirtualBox, then
