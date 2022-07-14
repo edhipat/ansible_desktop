@@ -19,6 +19,7 @@
         - wget
         - curl
         - postgresql-client
+        - libfuse2
 
 #  - name: install jdk packages
 #    apt:
