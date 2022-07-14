@@ -20,11 +20,6 @@
         - curl
         - postgresql-client
 
-#  - name: install VBox Guest addition
-#    apt:
-#      name:
-#        - virtualbox-guest-dkms
-
 #  - name: install jdk packages
 #    apt:
 #      name:
@@ -62,20 +57,20 @@
   - name: set show-trash on desktop to false
     become_user: dhiraj
     dconf:
-      key: "/org/gnome/shell/extensions/desktop-icons/show-trash"
+      key: "/org/gnome/shell/extensions/ding/show-trash"
       value: "false"
 
   - name: set show-home on desktop to false
     become_user: dhiraj
     dconf:
-      key: "/org/gnome/shell/extensions/desktop-icons/show-home"
+      key: "/org/gnome/shell/extensions/ding/show-home"
       value: "false"
 
   - name: add mount block to fstab
     lineinfile:
       path: /etc/fstab
       regexp: "^base /home/dhiraj/base"
-      line: "base /home/dhiraj/base vboxsf rw,noauto 0 1"
+      line: "base  /home/dhiraj/base  vboxsf   rw,noauto     0     1"
       create: yes
       state: present
 
@@ -114,7 +109,6 @@
     blockinfile:
       path: /etc/environment
       block: |
-        PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
         JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
         SPARK_HOME="/usr/local/spark/spark-3.1.2-bin-hadoop2.7/"
       create: yes
