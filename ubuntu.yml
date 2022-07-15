@@ -71,7 +71,7 @@
     lineinfile:
       path: /etc/fstab
       regexp: "^base /home/dhiraj/base"
-      line: "base  /home/dhiraj/base  vboxsf   rw,noauto     0     1"
+      line: "base  /home/dhiraj/base  vboxsf   rw,noauto,x-systemd.automount     0     1"
       create: yes
       state: present
 
@@ -125,6 +125,18 @@
       mode: u+x
       owner: dhiraj
       group: dhiraj
+
+  - name: install sdkman
+    shell: curl -s https://get.sdkman.io | bash
+    args:
+      warn: no
+
+
+#  - name: install java and scala
+#    shell: |
+#      sdk install java {{ java_version }}-open
+#      sdk install scala {{ scala_version }}
+#      sdk install gradle {{ gradle_version }}
 
 #  - name: add ansible user
 #    user:
